@@ -1,5 +1,5 @@
 {
-    'name': 'Public Knowledge Guide',
+    'name': 'Knowledge Controller',
     'summary': 'Public-facing version of Knowledge Articles with navigation, breadcrumbs, search, and mobile layout.',
     'version': '1.1',
     'category': 'Website',
