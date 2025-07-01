@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <template id="public_guide_template" name="Public Guide Template">
+    <t t-call="website.layout">
+      <div class="container mt-4 mb-5">
+        <form method="get" class="input-group mb-3">
+          <input type="text" name="q" class="form-control" placeholder="Search guide..." t-att-value="search_query"/>
+          <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+
+        <div t-if="search_query">
+          <h5>Search Results for "<t t-esc="search_query"/>":</h5>
+          <ul class="list-unstyled">
+            <li t-foreach="search_results" t-as="res">
+              <a t-attf-href="/guide/#{res.slug}" class="d-block py-1" t-esc="res.name"/>
+            </li>
+          </ul>
+        </div>
+
+        <div class="row" t-if="not search_query">
+          <!-- Sidebar -->
+          <aside class="col-lg-3 col-md-4 d-none d-md-block">
+            <nav class="o_knowledge_nav">
+              <ul class="list-unstyled">
+                <li t-foreach="top_articles" t-as="top">
+                  <a class="d-block py-1 fw-bold" t-attf-href="/guide/#{top.slug}" t-esc="top.name"/>
+                  <ul class="ms-3" t-if="top.id == article.parent_id.id or top.id == article.id">
+                    <li t-foreach="top.child_ids.filtered(lambda c: c.is_published)" t-as="child">
+                      <a class="d-block py-1 small" t-attf-href="/guide/#{top.slug}/#{child.slug}" t-esc="child.name"/>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </aside>
+
+          <!-- Main Content -->
+          <main class="col-lg-9 col-md-8">
+            <nav aria-label="breadcrumb" class="mb-3">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/guide">Home</a></li>
+                <t t-foreach="breadcrumbs" t-as="bc">
+                  <li class="breadcrumb-item" t-attf-class="#{loop.last and 'active'}" t-att-aria-current="#{loop.last and 'page'}">
+                    <t t-if="not loop.last"><a t-attf-href="/guide/#{bc.slug}" t-esc="bc.name"/></t>
+                    <t t-if="loop.last" t-esc="bc.name"/>
+                  </li>
+                </t>
+              </ol>
+            </nav>
+
+            <h1 class="mb-3" t-esc="article.name if article else 'Guide Home'"/>
+            <div class="o_knowledge_content" t-if="article" t-raw="article.body"/>
+            <div class="row" t-if="sub_articles">
+              <div class="col-12 mt-4">
+                <h5>More in this section:</h5>
+                <ul class="list-unstyled row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+                  <li t-foreach="sub_articles" t-as="child" class="col">
+                    <a class="card h-100 text-decoration-none shadow-sm p-3" t-attf-href="/guide/#{article.slug}/#{child.slug}">
+                      <strong t-esc="child.name"/>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </t>
+  </template>
+</odoo>
